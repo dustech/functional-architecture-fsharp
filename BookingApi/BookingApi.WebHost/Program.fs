@@ -3,8 +3,27 @@ namespace BookingApi.WebHost
 open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
+open Microsoft.AspNetCore.Mvc.Controllers
+open Microsoft.AspNetCore.Mvc
+
+
+type CompositionRoot() =
+    let seatingCapacity = 1
+    
+    interface IControllerActivator with
+        member this.Create(context: ControllerContext): obj = 
+            let myType = context.ActionDescriptor.ControllerTypeInfo
+            1 // TODO finire di implementare il custom activator ASPNET CORE
+        member this.Release(context: ControllerContext, controller: obj): unit = 
+            failwith "Not Implemented"
+        member this.ReleaseAsync(context: ControllerContext, controller: obj): System.Threading.Tasks.ValueTask = 
+            failwith "Not Implemented" 
+
+
+
 
 module Program =
+    open Microsoft.AspNetCore.Mvc.Controllers
     let exitCode = 0
 
     [<EntryPoint>]
@@ -12,10 +31,15 @@ module Program =
 
         let builder = WebApplication.CreateBuilder(args)
 
-        builder.Services.AddControllers()
 
-        let app = builder.Build()
+        
+        //provo ad andare in override con un custom activator
+        //builder.Services.AddControllers()
+        //builder.Services.AddSingleton<IControllerActivator>
 
+
+        let app = builder.Build()        
+        
         app.UseHttpsRedirection()
 
         app.UseAuthorization()
