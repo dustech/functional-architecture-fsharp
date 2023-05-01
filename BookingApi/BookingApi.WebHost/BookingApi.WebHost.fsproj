@@ -3,7 +3,6 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Models/Messages.fs" />
     <Compile Include="Models/MakeReservationRendition.fs" />
     <Compile Include="Controllers/ReservationsController.fs" />
     <Compile Include="Program.fs" />

@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BookingApi.HttpApi", "BookingApi.HttpApi\BookingApi.HttpApi.fsproj", "{44D23790-60D6-491F-93D1-CF70194DFFE0}"
+EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BookingApi.WebHost", "BookingApi.WebHost\BookingApi.WebHost.fsproj", "{78B1339A-254D-4D1D-82D7-8FCF1F836E77}"
 EndProject
 Global
@@ -18,5 +20,9 @@ Global
 		{78B1339A-254D-4D1D-82D7-8FCF1F836E77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78B1339A-254D-4D1D-82D7-8FCF1F836E77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78B1339A-254D-4D1D-82D7-8FCF1F836E77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44D23790-60D6-491F-93D1-CF70194DFFE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44D23790-60D6-491F-93D1-CF70194DFFE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44D23790-60D6-491F-93D1-CF70194DFFE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44D23790-60D6-491F-93D1-CF70194DFFE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
