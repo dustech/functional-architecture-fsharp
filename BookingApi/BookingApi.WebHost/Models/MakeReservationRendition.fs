@@ -4,7 +4,7 @@ open System
 
 type MakeReservationRendition =
     {   
-        Date:       DateTime
+        Date:       string
         Name:       string
         Email:      string
         Quantity:   int

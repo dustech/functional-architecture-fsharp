@@ -16,7 +16,7 @@ type Cannolo =
 [<ApiController>]
 [<Route("[controller]")>]
 type ReservationsController (logger : ILogger<ReservationsController>) =
-    inherit ControllerBase()
+    inherit Controller()
     let subject = new Subject<Envelope<MakeReservation>>()
 
     [<HttpGet>]
@@ -28,8 +28,22 @@ type ReservationsController (logger : ILogger<ReservationsController>) =
     [<HttpPost>]
     member _.Post (rendition:MakeReservationRendition)  = 
         // printfn "%A" rendition
+        //predispongo il comando da inviare nella pipe
+        let cmd =   {
+                        MakeReservation.Date    = DateTime.Parse rendition.Date
+                        Name                    = rendition.Name
+                        Email                   = rendition.Email
+                        Quantity                = rendition.Quantity
+                    }
+                    |> EnvelopWithDefaults
+        //pubblico il comando nella pipeline
+        subject.OnNext cmd 
         new HttpResponseMessage (HttpStatusCode.Accepted)
 
     interface IObservable<Envelope<MakeReservation>> with
         member this.Subscribe observer = subject.Subscribe observer
 
+    override this.Dispose disposing = 
+        if disposing then 
+            subject.Dispose()
+        base.Dispose disposing
