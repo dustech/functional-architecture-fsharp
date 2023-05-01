@@ -27,7 +27,7 @@ type ReservationsController (logger : ILogger<ReservationsController>) =
 
     [<HttpPost>]
     member _.Post (rendition:MakeReservationRendition)  = 
-        // printfn "%A" rendition
+        printfn "POST reservations \n %A" rendition
         //predispongo il comando da inviare nella pipe
         let cmd =   {
                         MakeReservation.Date    = DateTime.Parse rendition.Date
