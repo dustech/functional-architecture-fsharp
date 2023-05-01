@@ -4,8 +4,9 @@ open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
 open System.Net.Http
 open System.Net
+open BookingApi.HttpApi.Models
 open BookingApi.WebHost.Models
-
+open System.Reactive.Subjects
 
 
 type Cannolo =
@@ -16,7 +17,7 @@ type Cannolo =
 [<Route("[controller]")>]
 type ReservationsController (logger : ILogger<ReservationsController>) =
     inherit ControllerBase()
-
+    let subject = new Subject<Envelope<MakeReservation>>()
 
     [<HttpGet>]
     member _.Get() =
