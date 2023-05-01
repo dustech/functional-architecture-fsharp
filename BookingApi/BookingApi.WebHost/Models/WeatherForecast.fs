@@ -1,4 +1,4 @@
-namespace BookingApi.WebHost
+namespace BookingApi.WebHost.Models
 
 open System
 
