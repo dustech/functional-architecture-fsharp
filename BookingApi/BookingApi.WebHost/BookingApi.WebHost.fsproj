@@ -9,6 +9,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../BookingApi.HttpApi/BookingApi.HttpApi.fsproj" />
+    <PackageReference Include="System.Reactive.Core" Version="5.0.0" />
+    <PackageReference Include="System.Reactive.Interfaces" Version="5.0.0" />
+    <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />    
     <PackageReference Include="System.Reactive" Version="5.0.0" />
   </ItemGroup>
 </Project>
