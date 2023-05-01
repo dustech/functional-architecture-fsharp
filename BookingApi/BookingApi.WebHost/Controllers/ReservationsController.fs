@@ -26,4 +26,5 @@ type ReservationsController (logger : ILogger<ReservationsController>) =
 
     [<HttpPost>]
     member _.Post (rendition:MakeReservationRendition)  = 
+        // printfn "%A" rendition
         new HttpResponseMessage (HttpStatusCode.Accepted)
