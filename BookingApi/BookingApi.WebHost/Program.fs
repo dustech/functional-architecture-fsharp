@@ -34,13 +34,19 @@ module Program =
 
         
         //provo ad andare in override con un custom activator
-        //builder.Services.AddControllers()
+        builder.Services.AddControllers()
         //builder.Services.AddSingleton<IControllerActivator>
+        //builder.Services.AddEndpointsApiExplorer()
+        builder.Services.AddSwaggerGen()
 
 
         let app = builder.Build()        
-        
-        app.UseHttpsRedirection()
+        printf "IsDevelopment = %b\n\n" <| app.Environment.IsDevelopment()
+
+        if app.Environment.IsDevelopment() then
+            app.UseSwagger() |> ignore
+            app.UseSwaggerUI() |> ignore
+
 
         app.UseAuthorization()
         

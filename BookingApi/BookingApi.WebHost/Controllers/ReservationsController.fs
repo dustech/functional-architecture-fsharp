@@ -42,7 +42,8 @@ type ReservationsController (logger : ILogger<ReservationsController>) =
 
     interface IObservable<Envelope<MakeReservation>> with
         member this.Subscribe observer = subject.Subscribe observer
-
+    
+    [<NonAction>]
     override this.Dispose disposing = 
         if disposing then 
             subject.Dispose()
