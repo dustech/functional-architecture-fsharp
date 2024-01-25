@@ -25,7 +25,10 @@ module Program =
         builder.Services.AddControllers()
 
         let app = builder.Build()
-
+        
+        Console.WriteLine($"{Environment.NewLine} {app.Environment.EnvironmentName} Environment {Environment.NewLine}")
+        
+        
         app.UseHttpsRedirection()
 
         app.UseAuthorization()

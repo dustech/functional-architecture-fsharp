@@ -8,6 +8,7 @@
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
         <AssemblyName>Dustech.Io.BookingApi.WebHost</AssemblyName>
         <RootNamespace>Dustech.Io.BookingApi.WebHost</RootNamespace>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
