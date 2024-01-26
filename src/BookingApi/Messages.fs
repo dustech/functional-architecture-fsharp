@@ -26,3 +26,10 @@ module Envelope =
     
     let EnvelopWithDefaults item =
         Envelop (Guid.NewGuid()) DateTimeOffset.Now item
+     
+type Reservation = {
+    Date : DateTime
+    Name : string
+    Email : string
+    Quantity : int
+}
