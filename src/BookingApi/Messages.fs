@@ -2,6 +2,13 @@ namespace Dustech.BookingApi.Messages
 
 open System
 
+type MakeReservation = {
+        Date      : DateTime
+        Name      : string
+        Email     : string
+        Quantity  : int
+    }
+
 module Envelope =
     type Envelope<'T> = {
         Id : Guid
