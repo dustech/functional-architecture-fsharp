@@ -1,5 +1,17 @@
-﻿GET https://localhost:7045/home
+﻿#< {%
+#    request.variables.set("PORT", "7045")
+#%}
+
+GET https://localhost:7045/home
 Accept: application/json
 
-###
 
+
+###
+POST https://localhost:7045/reservation
+Content-Type: application/json
+
+{
+  "id": 999,
+  "value": "content"
+}
