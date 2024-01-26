@@ -5,19 +5,19 @@
         <ImplicitUsings>false</ImplicitUsings>
         <InvariantGlobalization>false</InvariantGlobalization>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-        <AssemblyName>Io.Dustech.BookingApi.WebHost</AssemblyName>
-        <RootNamespace>Io.Dustech.BookingApi.WebHost</RootNamespace>
+        <AssemblyName>Dustech.BookingApi.WebHost</AssemblyName>
+        <RootNamespace>Dustech.BookingApi.WebHost</RootNamespace>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
         
     <ItemGroup>
-        <Compile Include="WeatherForecast.fs"/>
-        <Compile Include="Controllers/WeatherForecastController.fs"/>
         <Compile Include="Program.fs"/>
+        
     </ItemGroup>
     
     <ItemGroup>
       <ProjectReference Include="../BookingApi/BookingApi.fsproj" />
+
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿module BookingApi.Infrastructure 
+﻿module Dustech.BookingApi.Infrastructure 
 
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Routing.Constraints
@@ -9,7 +9,7 @@ type HttpRouteDefaults = {Controller:string; Id :obj}
 let ConfigureRoutes (app : WebApplication) =
     app.MapControllerRoute(
             "DefaultAPI","{controller}/{id}",
-            {Controller = "WeatherForecast"; Id = OptionalRouteConstraint}
+            {Controller = "Home"; Id = OptionalRouteConstraint}
             )
             |> ignore
 

@@ -1,23 +1,25 @@
-namespace BookingApi.WebHost
+namespace Dustech.BookingApi.WebHost
 #nowarn "20"
 open System
 open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
-open BookingApi.Infrastructure
-
+open Dustech.BookingApi.Infrastructure
 module Program =
     let exitCode = 0
     
     type HttpRouteDefaults = {Controller:string; Id :obj}
     
+    
     [<EntryPoint>]
     let main args =
 
         let builder = WebApplication.CreateBuilder(args)
-
-        builder.Services.AddControllers()
-
+        
+        builder.Services.AddControllers() |> ignore
+        
+        
+        
         let app = builder.Build()
         
         Console.WriteLine($"{Environment.NewLine} {app.Environment.EnvironmentName} Environment {Environment.NewLine}")
@@ -25,11 +27,14 @@ module Program =
         
         app.UseHttpsRedirection()
         
-        Configure app
+        app.UseDeveloperExceptionPage()
+        
+        
         //app.UseAuthorization()
-        //app.MapControllers()
-        // app.MapControllerRoute(
-        //     "DefaultAPI","{controller}/{id}",{Controller = "WeatherForecast"; Id = OptionalRouteConstraint}) |> ignore
+        //app.MapControllers()        
+        
+        Configure app
+        
         
         app.Run()
 

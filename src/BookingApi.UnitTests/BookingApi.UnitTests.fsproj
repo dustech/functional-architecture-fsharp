@@ -9,8 +9,8 @@
         <ImplicitUsings>false</ImplicitUsings>
         <InvariantGlobalization>false</InvariantGlobalization>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-        <AssemblyName>Io.Dustech.BookingApi.UnitTests</AssemblyName>
-        <RootNamespace>Io.Dustech.BookingApi.UnitTests</RootNamespace>
+        <AssemblyName>Dustech.BookingApi.UnitTests</AssemblyName>
+        <RootNamespace>Dustech.BookingApi.UnitTests</RootNamespace>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
