@@ -11,7 +11,12 @@ module Reservations =
     
     type ReservationsInMemory(reservations) =
         interface IReservations with
-            member this.Between(var0) (var1) = failwith "todo"
-            member this.GetEnumerator(): Collections.Generic.IEnumerator<Envelope<Reservation>> = failwith "todo"
-            member this.GetEnumerator(): Collections.IEnumerator = failwith "todo"
+            member this.Between min max =
+                reservations
+                |> Seq.filter (fun r -> min <= r.Item.Date && r.Item.Date <= max)
+            
+            member _.GetEnumerator() =
+                reservations.GetEnumerator()
+            member self.GetEnumerator() =
+                (self :> seq<Envelope<Reservation>>).GetEnumerator() :> System.Collections.IEnumerator
         
