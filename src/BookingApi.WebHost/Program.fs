@@ -2,9 +2,9 @@ namespace BookingApi.WebHost
 #nowarn "20"
 open System
 open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Routing.Constraints
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
+open BookingApi.Infrastructure
 
 module Program =
     let exitCode = 0
@@ -24,11 +24,13 @@ module Program =
         
         
         app.UseHttpsRedirection()
-
+        
+        Configure app
         //app.UseAuthorization()
         //app.MapControllers()
-        app.MapControllerRoute(
-            "DefaultAPI","{controller}/{id}",{Controller = "WeatherForecast"; Id = OptionalRouteConstraint}) |> ignore
+        // app.MapControllerRoute(
+        //     "DefaultAPI","{controller}/{id}",{Controller = "WeatherForecast"; Id = OptionalRouteConstraint}) |> ignore
+        
         app.Run()
 
         exitCode
