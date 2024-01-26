@@ -14,6 +14,7 @@
     <ItemGroup>
         <Compile Include="Messages.fs" />
         <Compile Include="Renditions.fs" />
+        <Compile Include="DomainModel.fs" />
         <Compile Include="Controllers.fs" />
         <Compile Include="Infrastructure.fs" />
         
