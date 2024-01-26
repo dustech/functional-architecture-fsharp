@@ -1,0 +1,17 @@
+let randomReservations = seq [
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now; Name = "Alex Smith"; Email = "alex@example.com"; Quantity = 2 };
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now; Name = "Maria Garcia"; Email = "maria@example.com"; Quantity = 4 };
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now; Name = "John Doe"; Email = "john@example.com"; Quantity = 1 };
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now; Name = "Jane Austen"; Email = "jane@example.com"; Quantity = 3 };
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now; Name = "Bob Johnson"; Email = "bob@example.com"; Quantity = 5 };
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now.AddDays(1); Name = "Alice Brown"; Email = "alice@example.com"; Quantity = 2 };
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now.AddDays(1); Name = "Carlos Diaz"; Email = "carlos@example.com"; Quantity = 4 };
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now.AddDays(-1); Name = "Sara Miller"; Email = "sara@example.com"; Quantity = 3 };
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now; Name = "Omar Khan"; Email = "omar@example.com"; Quantity = 2 };
+            EnvelopWithDefaults { Reservation.Date = DateTime.Now.AddDays(1); Name = "Lily White"; Email = "lily@example.com"; Quantity = 5 }
+        ]
+        let resdb = ReservationsInMemory randomReservations
+        let pollo = On DateTime.Now (resdb) |> Seq.toList
+        
+        // PrintAll (Seq.toList resdb)
+        PrintAll pollo

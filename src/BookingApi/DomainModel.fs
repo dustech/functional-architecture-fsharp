@@ -28,3 +28,16 @@ module Reservations =
         let min = date.Date
         let max = (min.AddDays 1.0) - TimeSpan.FromTicks 1L
         reservations |> Between min max
+       
+    let Print reservation =
+        printfn "Date: %A, Name: %s, Email: %s, Quantity: %d"
+            reservation.Item.Date reservation.Item.Name reservation.Item.Email reservation.Item.Quantity
+            
+    let rec PrintAll reservations =
+        match reservations with
+        | [] -> printfn "No more reservations"
+        | reservation :: tail ->
+           Print reservation
+           PrintAll tail
+            
+     
