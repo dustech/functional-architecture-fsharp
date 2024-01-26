@@ -19,4 +19,4 @@ module Reservations =
                 reservations.GetEnumerator()
             member self.GetEnumerator() =
                 (self :> seq<Envelope<Reservation>>).GetEnumerator() :> System.Collections.IEnumerator
-        
+    let ToReservations reservations = ReservationsInMemory(reservations)    
