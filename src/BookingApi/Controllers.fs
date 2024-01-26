@@ -13,9 +13,14 @@ type HomeController () =
     [<HttpGet>]
     member _.Get() =
         base.Ok("Hello from F# Controller!")
-    
-    [<HttpGet>]
-    [<Route("{id}")>]
-    member _.Get(id : int) =
-        {Message = $"My Get but with {id}"}
         
+[<ApiController>]
+[<Route("[controller]")>]
+type ReservationController () =
+    inherit ControllerBase()
+    
+    [<HttpPost>]
+    member _.Post (rendition:string) =
+        base.Accepted()
+    
+    
