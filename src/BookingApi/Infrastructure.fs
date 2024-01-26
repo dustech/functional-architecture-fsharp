@@ -13,4 +13,6 @@ let ConfigureRoutes (app : WebApplication) =
             )
             |> ignore
 
+//let ConfigureFormatting (config: HttpConfiguration)
+
 let Configure = ConfigureRoutes

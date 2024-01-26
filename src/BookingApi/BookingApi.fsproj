@@ -12,6 +12,7 @@
     </PropertyGroup>
     
     <ItemGroup>
+        <Compile Include="Renditions.fs" />
         <Compile Include="Controllers.fs" />
         <Compile Include="Infrastructure.fs" />
         

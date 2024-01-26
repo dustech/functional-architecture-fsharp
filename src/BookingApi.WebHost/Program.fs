@@ -26,13 +26,7 @@ module Program =
         
         
         app.UseHttpsRedirection()
-        
-        app.UseDeveloperExceptionPage()
-        
-        
-        //app.UseAuthorization()
-        //app.MapControllers()        
-        
+                
         Configure app
         
         
