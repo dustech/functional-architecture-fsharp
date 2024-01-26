@@ -9,6 +9,7 @@ type MakeReservation = {
         Quantity  : int
     }
 
+[<AutoOpen>]
 module Envelope =
     type Envelope<'T> = {
         Id : Guid
