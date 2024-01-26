@@ -36,3 +36,12 @@ type WeatherForecastController (logger : ILogger<WeatherForecastController>) =
                   TemperatureC = rng.Next(-20,55)
                   Summary = summaries.[rng.Next(summaries.Length)] }
         |]
+    
+    [<HttpGet>]
+    [<Route("{id}")>]
+    member _.Get(id : int) =
+        let rng = System.Random()
+        { Date = DateTime.Now.AddDays(id)
+          TemperatureC = rng.Next(-20,55)
+          Summary = summaries.[0]
+        }
