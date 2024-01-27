@@ -30,8 +30,10 @@ module Reservations =
         reservations |> Between min max
        
     let Print reservation =
-        printfn "Date: %A, Name: %s, Email: %s, Quantity: %d"
-            reservation.Item.Date reservation.Item.Name reservation.Item.Email reservation.Item.Quantity
+        printfn $"Date: %A{reservation.Item.Date},
+                    Name: %s{reservation.Item.Name},
+                    Email: %s{reservation.Item.Email},
+                    Quantity: %d{reservation.Item.Quantity}"
             
     let rec PrintAll reservations =
         match reservations with
