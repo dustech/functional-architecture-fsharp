@@ -9,6 +9,23 @@ type MakeReservation = {
         Quantity  : int
     }
 
+type Reservation = {
+    Date : DateTime
+    Name : string
+    Email : string
+    Quantity : int
+}
+
+module MessagesOperations = 
+    let toReservation (cmd:MakeReservation) =
+            {
+                Reservation.Date = cmd.Date
+                Name = cmd.Name
+                Email = cmd.Email
+                Quantity = cmd.Quantity
+            }   
+        
+
 [<AutoOpen>]
 module Envelope =
     type Envelope<'T> = {
@@ -27,9 +44,3 @@ module Envelope =
     let EnvelopWithDefaults item =
         Envelop (Guid.NewGuid()) DateTimeOffset.Now item
      
-type Reservation = {
-    Date : DateTime
-    Name : string
-    Email : string
-    Quantity : int
-}
