@@ -41,5 +41,19 @@ module Reservations =
         | reservation :: tail ->
            Print reservation
            PrintAll tail
+    
+    let Handle capacity reservations (cmd : Envelope<MakeReservation>) =
+        let reservedSeatsOnDate =
+            reservations
+            |> On cmd.Item.Date
+            |> Seq.sumBy (fun r -> r.Item.Quantity )
+        if capacity - reservedSeatsOnDate < cmd.Item.Quantity then
+            None
+        else
+            MessagesOperations.toReservation cmd.Item 
+            |>  EnvelopWithDefaults
+            |>  Some
+        
+        
             
      
