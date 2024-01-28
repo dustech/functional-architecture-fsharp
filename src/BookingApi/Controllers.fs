@@ -1,11 +1,12 @@
 ﻿namespace Dustech.BookingApi.Controllers
 
 open System
-open System.Globalization
-open System.Reactive.Subjects
-open Dustech.BookingApi.Messages
-open Dustech.BookingApi.Renditions
+open System.Globalization // for CultureInfo
+open System.Reactive.Subjects // for Subject
 open Microsoft.AspNetCore.Mvc //for ApiController Attribute
+open Dustech.BookingApi.Messages // for all Messages types
+open Dustech.BookingApi.Renditions // for MakeReservationRendition cmd
+open Dustech.BookingApi.DomainModel.Notifications // for INotifications
 
 type SampleJson = { Message: string }
 
@@ -15,16 +16,15 @@ type HomeController() =
     inherit ControllerBase()
 
     [<HttpGet>]
-    member _.Get() = base.Ok("Hello from F# Controller!")
+    member _.Get() =
+        ``base``.Ok("Hello from F# Controller!")
 
 
 [<ApiController>]
 [<Route("[controller]")>]
 type ReservationController() =
     inherit Controller()
-
     let subject = new Subject<Envelope<MakeReservation>>()
-    
 
     [<HttpPost>]
     member _.Post(rendition: MakeReservationRendition) =
@@ -37,17 +37,36 @@ type ReservationController() =
 
         subject.OnNext cmd
         base.Accepted()
-    
+
     [<HttpGet>]
     member _.Get() =
-        base.Ok("Time to get all reservations")
-    
+        ``base``.Ok("Time to get all reservations")
+
     interface IObservable<Envelope<MakeReservation>> with
-        member this.Subscribe(observer) = subject.Subscribe observer
-            
+        member _.Subscribe(observer) = subject.Subscribe observer
 
-    override self.Dispose disposing =
-        if disposing then
-            subject.Dispose()
-
+    override _.Dispose disposing =
+        if disposing then subject.Dispose()
         base.Dispose disposing
+
+[<ApiController>]
+[<Route("[controller]")>]
+type NotificationController(notifications: INotifications) =
+    inherit ControllerBase()
+
+    [<HttpGet>]
+    member this.Get id =
+
+        let toRendition (n: Envelope<Notification>) =
+            { About = n.Item.About.ToString()
+              Type = n.Item.Type
+              Message = n.Item.Message }
+        let matches =
+            this.Notifications
+            |> About id
+            |> Seq.map toRendition
+            |> Seq.toArray
+        
+        base.Ok({Notifications = matches })
+
+    member this.Notifications = notifications

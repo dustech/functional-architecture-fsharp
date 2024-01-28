@@ -2,14 +2,13 @@
 
 open System // for Type
 open System.Threading.Tasks //  for ValueTask
-open Dustech.BookingApi.Controllers // for custom controllers
 open Microsoft.AspNetCore.Builder // for WebApplication
 open Microsoft.AspNetCore.Mvc // for ControllerContext
 open Microsoft.AspNetCore.Mvc.Controllers // for IControllerActivator
 open Microsoft.AspNetCore.Routing.Constraints // for OptionalRouteConstraint
 open Microsoft.Extensions.DependencyInjection // for AddSingleton
-
-
+open Dustech.BookingApi.Controllers // for custom controllers
+open Dustech.BookingApi.DomainModel.Notifications
 
 type HttpRouteDefaults = { Controller: string; Id: obj }
 
@@ -26,6 +25,7 @@ type CompositionRoot(reservationRequestObserver) =
             |> context.HttpContext.Response.RegisterForDispose
 
             c
+        | nameof NotificationController -> NotificationController([] |> ToNotifications)
         | _ ->
             raise
             <| InvalidOperationException($"Unknown controller {controllerType}")
