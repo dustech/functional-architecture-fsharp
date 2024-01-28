@@ -28,7 +28,9 @@ module Program =
 
 
         let reservationsSubject = new Subject<Envelope<Reservation>>()
-        reservationsSubject.Subscribe reservations.Add |> ignore
+
+        reservationsSubject.Subscribe reservations.Add
+        |> ignore
 
         let notificationsSubject = new Subject<Notification>()
 
@@ -47,7 +49,7 @@ module Program =
                         let newReservations = handle cmd
 
                         match newReservations with
-                        | Some(r) ->
+                        | Some r ->
                             reservationsSubject.OnNext r
 
                             notificationsSubject.OnNext
