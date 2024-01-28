@@ -1,14 +1,12 @@
 ﻿module Dustech.BookingApi.Infrastructure
 
 open System // for Type
-open System.Collections.Concurrent
-open System.Threading.Tasks
-open System.Xml
+open System.Collections.Concurrent // for ConcurrentBag
+open System.Threading.Tasks //  for ValueTask
 open Dustech.BookingApi.Controllers // for custom controllers
 open Dustech.BookingApi.Messages // for Envelope
 open Dustech.BookingApi.DomainModel.Reservations // for ToReservations and Handle
 open Microsoft.AspNetCore.Builder // for WebApplication
-open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc // for ControllerContext
 open Microsoft.AspNetCore.Mvc.Controllers // for IControllerActivator
 open Microsoft.AspNetCore.Routing.Constraints // for OptionalRouteConstraint
@@ -35,7 +33,7 @@ type CompositionRoot() =
                     match newReservations with
                     | Some(r) -> reservations.Add r
                     | None -> ()
-
+                    
                     return! loop ()
                 }
 
