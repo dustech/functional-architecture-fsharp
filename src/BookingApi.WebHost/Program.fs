@@ -4,6 +4,7 @@ namespace Dustech.BookingApi.WebHost
 
 open System // for Console
 open System.Collections.Concurrent // for ConcurrentBag
+open System.Reactive.Subjects // for reservationsSubject
 open Dustech.BookingApi.Messages // for Envelop, Reservation
 open Microsoft.AspNetCore.Builder // for WebApplication
 open Dustech.BookingApi.Infrastructure // for ConfigureBuilder
@@ -16,7 +17,7 @@ module Program =
 
     type Agent<'T> = MailboxProcessor<'T>
     let seatingCapacity = 10
-    
+
     [<EntryPoint>]
     let main args =
 
@@ -25,18 +26,21 @@ module Program =
         //builder.Services.AddControllers() |> ignore
         //builder.Services.AddSingleton<IControllerActivator>(fun _ -> new BookingApiControllerActivator() :> IControllerActivator) |> ignore
         //builder.Services.AddSingleton<IControllerActivator,BookingApiControllerActivator>() |> ignore
-        let db = ConcurrentBag<Envelope<Reservation>>()
+        let reservations = ConcurrentBag<Envelope<Reservation>>()
+        let reservationsSubject = new Subject<Envelope<Reservation>>()
+        reservationsSubject.Subscribe reservations.Add |> ignore
+
         let agent =
             new Agent<Envelope<MakeReservation>>(fun inbox ->
                 let rec loop () =
                     async {
                         let! cmd = inbox.Receive()
-                        let rs = db |> ToReservations
+                        let rs = reservations |> ToReservations
                         let handle = Handle seatingCapacity rs
                         let newReservations = handle cmd
 
                         match newReservations with
-                        | Some (r) -> db.Add r
+                        | Some (r) -> reservationsSubject.OnNext r
                         | None -> ()
 
                         Seq.toList rs |> PrintAll
@@ -47,10 +51,7 @@ module Program =
                 loop ())
 
         do agent.Start()
-        ConfigureBuilder
-            builder
-            (db |> ToReservations)
-            agent.Post
+        ConfigureBuilder builder (reservations |> ToReservations) agent.Post
 
         let app = builder.Build()
 
@@ -61,5 +62,5 @@ module Program =
 
 
         app.Run()
-
+        reservationsSubject.Dispose()
         exitCode
