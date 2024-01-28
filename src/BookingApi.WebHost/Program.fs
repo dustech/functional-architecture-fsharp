@@ -75,7 +75,7 @@ module Program =
                 loop ())
 
         do agent.Start()
-        ConfigureBuilder builder (reservations |> ToReservations) agent.Post
+        ConfigureBuilder builder agent.Post
 
         let app = builder.Build()
 

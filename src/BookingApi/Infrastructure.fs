@@ -3,7 +3,6 @@
 open System // for Type
 open System.Threading.Tasks //  for ValueTask
 open Dustech.BookingApi.Controllers // for custom controllers
-open Dustech.BookingApi.DomainModel.Reservations // for IReservations
 open Microsoft.AspNetCore.Builder // for WebApplication
 open Microsoft.AspNetCore.Mvc // for ControllerContext
 open Microsoft.AspNetCore.Mvc.Controllers // for IControllerActivator
@@ -14,7 +13,7 @@ open Microsoft.Extensions.DependencyInjection // for AddSingleton
 
 type HttpRouteDefaults = { Controller: string; Id: obj }
 
-type CompositionRoot(reservations:IReservations ,reservationRequestObserver) =
+type CompositionRoot(reservationRequestObserver) =
 
     let Make (context: ControllerContext, controllerType: Type) : obj =
         match controllerType.Name with
@@ -36,7 +35,7 @@ type CompositionRoot(reservations:IReservations ,reservationRequestObserver) =
         member me.Create(context) =
             Make(context, context.ActionDescriptor.ControllerTypeInfo.AsType())
 
-        member _.Release(context, controller) =
+        member _.Release(_, controller) =
             match controller with
             | :? IDisposable as c -> c.Dispose()
             | _ -> ()
@@ -47,11 +46,10 @@ type CompositionRoot(reservations:IReservations ,reservationRequestObserver) =
             |> ValueTask
 
 
-let ConfigureServices (builder: WebApplicationBuilder) reservations reservationRequestObserver =
+let ConfigureServices (builder: WebApplicationBuilder) reservationRequestObserver =
     builder.Services.AddControllers() |> ignore
-    // builder.Services.AddSingleton<IControllerActivator, CompositionRoot>() |> ignore
     builder.Services.AddSingleton<IControllerActivator> (fun _ ->
-        new CompositionRoot(reservations, reservationRequestObserver) :> IControllerActivator)
+        CompositionRoot(reservationRequestObserver) :> IControllerActivator)
     |> ignore
 
 
@@ -68,6 +66,5 @@ let ConfigureRoutes (app: WebApplication) =
     )
     |> ignore
 
-//let ConfigureFormatting (config: HttpConfiguration)
 
 let Configure = ConfigureRoutes
