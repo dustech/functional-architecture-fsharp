@@ -37,7 +37,11 @@ type ReservationController() =
 
         subject.OnNext cmd
         base.Accepted()
-
+    
+    [<HttpGet>]
+    member _.Get() =
+        base.Ok("Time to get all reservations")
+    
     interface IObservable<Envelope<MakeReservation>> with
         member this.Subscribe(observer) = subject.Subscribe observer
             
