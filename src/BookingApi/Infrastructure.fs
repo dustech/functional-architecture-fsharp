@@ -1,21 +1,54 @@
 ﻿module Dustech.BookingApi.Infrastructure
 
 open System // for Type
+open System.Collections.Concurrent
 open System.Threading.Tasks
+open System.Xml
 open Dustech.BookingApi.Controllers // for custom controllers
+open Dustech.BookingApi.Messages // for Envelope
+open Dustech.BookingApi.DomainModel.Reservations // for ToReservations and Handle
 open Microsoft.AspNetCore.Builder // for WebApplication
+open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc // for ControllerContext
 open Microsoft.AspNetCore.Mvc.Controllers // for IControllerActivator
 open Microsoft.AspNetCore.Routing.Constraints // for OptionalRouteConstraint
 open Microsoft.Extensions.DependencyInjection // for AddSingleton
 
+type Agent<'T> = MailboxProcessor<'T>
+
 type HttpRouteDefaults = { Controller: string; Id: obj }
 
 type CompositionRoot() =
+    
+    let seatingCapacity = 10
+    let reservations =
+        ConcurrentBag<Envelope<Reservation>>()
+    
+    let agent = new Agent<Envelope<MakeReservation>>(
+        fun inbox ->
+            let rec loop () =
+                async {
+                    let! cmd = inbox.Receive()
+                    let rs = reservations |> ToReservations
+                    let handle = Handle seatingCapacity rs
+                    let newReservations = handle cmd
+                    match newReservations with
+                    | Some(r) -> reservations.Add r
+                    | None -> ()
+                    return! loop()
+                }
+            loop()
+        )
+    do agent.Start()
+    
     let Make (context: ControllerContext, controllerType: Type) : obj =
         match controllerType.Name with
         | nameof HomeController -> HomeController()
-        | nameof ReservationController -> new ReservationController()
+        | nameof ReservationController ->
+            let c = new ReservationController()
+            let sub = c.Subscribe agent.Post
+            context.HttpContext.Response.RegisterForDispose sub
+            c
         | _ -> raise <| InvalidOperationException($"Unknown controller {controllerType}")
 
 

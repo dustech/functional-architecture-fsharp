@@ -7,45 +7,45 @@ open Dustech.BookingApi.Messages
 open Dustech.BookingApi.Renditions
 open Microsoft.AspNetCore.Mvc //for ApiController Attribute
 
-type SampleJson = {Message:string}
+type SampleJson = { Message: string }
 
 [<ApiController>]
 [<Route("[controller]")>]
-type HomeController () =
+type HomeController() =
     inherit ControllerBase()
 
     [<HttpGet>]
-    member _.Get() =        
-        base.Ok("Hello from F# Controller!")
-
-
+    member _.Get() = base.Ok("Hello from F# Controller!")
 
 
 [<ApiController>]
 [<Route("[controller]")>]
-type ReservationController () =
+type ReservationController() =
     inherit Controller()
-    
+
     let subject = new Subject<Envelope<MakeReservation>>()
     
+
     [<HttpPost>]
-    member _.Post (rendition : MakeReservationRendition) =
+    member _.Post(rendition: MakeReservationRendition) =
         let cmd =
-            {
-                MakeReservation.Date = DateTime.Parse(rendition.Date,CultureInfo.InvariantCulture)                        
-                Name = rendition.Name
-                Email = rendition.Email
-                Quantity = rendition.Quantity 
-            }
+            { MakeReservation.Date = DateTime.Parse(rendition.Date, CultureInfo.InvariantCulture)
+              Name = rendition.Name
+              Email = rendition.Email
+              Quantity = rendition.Quantity }
             |> EnvelopWithDefaults
+
         subject.OnNext cmd
         Console.WriteLine(rendition)
         Console.WriteLine(cmd)
         base.Accepted()
-    
+
     interface IObservable<Envelope<MakeReservation>> with
         member this.Subscribe(observer) = subject.Subscribe observer
-    
+            
+
     override self.Dispose disposing =
-        if disposing then subject.Dispose()
+        if disposing then
+            subject.Dispose()
+
         base.Dispose disposing
