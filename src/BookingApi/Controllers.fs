@@ -15,8 +15,7 @@ type HomeController () =
     inherit ControllerBase()
 
     [<HttpGet>]
-    member _.Get() =
-        failwith "Tutto rotto male"
+    member _.Get() =        
         base.Ok("Hello from F# Controller!")
 
 
