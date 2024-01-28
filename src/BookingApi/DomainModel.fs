@@ -30,7 +30,12 @@ module Reservations =
         reservations |> Between min max
        
     let Print reservation =
-        printfn $"Date: %A{reservation.Item.Date},
+        printfn $"
+            Envelope data:
+                Created: %A{reservation.Created}
+                Id: %A{reservation.Id}
+                Reservation data:
+                    Date: %A{reservation.Item.Date},
                     Name: %s{reservation.Item.Name},
                     Email: %s{reservation.Item.Email},
                     Quantity: %d{reservation.Item.Quantity}"

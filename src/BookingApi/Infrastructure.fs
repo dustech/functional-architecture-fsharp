@@ -34,6 +34,9 @@ type CompositionRoot() =
                     | Some(r) -> reservations.Add r
                     | None -> ()
                     
+                    Seq.toList rs 
+                    |>  PrintAll
+                    
                     return! loop ()
                 }
 
