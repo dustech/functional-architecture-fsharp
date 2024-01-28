@@ -7,16 +7,17 @@ open Microsoft.AspNetCore.Builder // for WebApplication
 open Microsoft.AspNetCore.Mvc // for ControllerContext
 open Microsoft.AspNetCore.Mvc.Controllers // for IControllerActivator
 open Microsoft.AspNetCore.Routing.Constraints // for OptionalRouteConstraint
-
+open Microsoft.Extensions.DependencyInjection // for AddSingleton
 
 type HttpRouteDefaults = { Controller: string; Id: obj }
 
-type BookingApiControllerActivator() =
+type CompositionRoot() =
     let Make (context: ControllerContext, controllerType: Type) : obj =
         match controllerType.Name with
         | nameof HomeController -> HomeController()
         | nameof ReservationController -> new ReservationController()
-        | _ -> raise (InvalidOperationException($"Unknown controller {controllerType}"))
+        | _ -> raise <| InvalidOperationException($"Unknown controller {controllerType}")
+
 
     interface IControllerActivator with
         member me.Create(context) =
@@ -31,10 +32,12 @@ type BookingApiControllerActivator() =
             (me :> IControllerActivator).Release(context, controller) |> ValueTask
 
 
+let ConfigureServices (builder: WebApplicationBuilder) =
+    builder.Services.AddControllers() |> ignore
+    builder.Services.AddSingleton<IControllerActivator, CompositionRoot>()
+    |> ignore
 
-
-
-
+let ConfigureBuilder = ConfigureServices
 
 let ConfigureRoutes (app: WebApplication) =
     app.MapControllerRoute(

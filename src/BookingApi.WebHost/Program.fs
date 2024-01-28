@@ -17,9 +17,11 @@ module Program =
 
         let builder = WebApplication.CreateBuilder(args)
         
-        builder.Services.AddControllers() |> ignore
+        //builder.Services.AddControllers() |> ignore
         //builder.Services.AddSingleton<IControllerActivator>(fun _ -> new BookingApiControllerActivator() :> IControllerActivator) |> ignore
-        builder.Services.AddSingleton<IControllerActivator,BookingApiControllerActivator>() |> ignore
+        //builder.Services.AddSingleton<IControllerActivator,BookingApiControllerActivator>() |> ignore
+        
+        ConfigureBuilder builder
         
         let app = builder.Build()
         
