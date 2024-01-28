@@ -1,8 +1,4 @@
-### POST
-< {%
-    request.variables.set("PORT", "7045")
-    
-%}
+###
 
 POST https://localhost:{{PORT}}/reservation
 Content-Type: application/json
@@ -14,3 +10,6 @@ Content-Type: application/json
   "quantity"  : {{$random.integer(1,10)}}
 }
 
+###
+
+GET https://localhost:{{PORT}}/reservation
