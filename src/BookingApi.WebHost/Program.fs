@@ -1,11 +1,10 @@
 namespace Dustech.BookingApi.WebHost
 #nowarn "20"
 open System
-open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Mvc.Controllers
-open Microsoft.Extensions.DependencyInjection
-open Microsoft.Extensions.Hosting
-open Dustech.BookingApi.Infrastructure
+open System.Collections.Concurrent // for ConcurrentBag
+open Dustech.BookingApi.Messages // for Envelop, Reservation
+open Microsoft.AspNetCore.Builder // for WebApplication
+open Dustech.BookingApi.Infrastructure // for ConfigureBuilder
 module Program =
     let exitCode = 0
     
@@ -20,8 +19,8 @@ module Program =
         //builder.Services.AddControllers() |> ignore
         //builder.Services.AddSingleton<IControllerActivator>(fun _ -> new BookingApiControllerActivator() :> IControllerActivator) |> ignore
         //builder.Services.AddSingleton<IControllerActivator,BookingApiControllerActivator>() |> ignore
-        
-        ConfigureBuilder builder
+        let db = ConcurrentBag<Envelope<Reservation>>()
+        ConfigureBuilder builder db
         
         let app = builder.Build()
         

@@ -16,10 +16,9 @@ type Agent<'T> = MailboxProcessor<'T>
 
 type HttpRouteDefaults = { Controller: string; Id: obj }
 
-type CompositionRoot() =
+type CompositionRoot(reservations :ConcurrentBag<Envelope<Reservation>>) =
 
     let seatingCapacity = 10
-    let reservations = ConcurrentBag<Envelope<Reservation>>()
 
     let agent =
         new Agent<Envelope<MakeReservation>>(fun inbox ->
@@ -68,10 +67,12 @@ type CompositionRoot() =
             (me :> IControllerActivator).Release(context, controller) |> ValueTask
 
 
-let ConfigureServices (builder: WebApplicationBuilder) =
+let ConfigureServices (builder: WebApplicationBuilder) reservations =
     builder.Services.AddControllers() |> ignore
-    builder.Services.AddSingleton<IControllerActivator, CompositionRoot>() |> ignore
-
+    // builder.Services.AddSingleton<IControllerActivator, CompositionRoot>() |> ignore
+    builder.Services.AddSingleton<IControllerActivator>(fun _ -> new CompositionRoot(reservations) :> IControllerActivator) |> ignore
+        
+        
 let ConfigureBuilder = ConfigureServices
 
 let ConfigureRoutes (app: WebApplication) =
