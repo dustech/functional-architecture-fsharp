@@ -23,12 +23,19 @@ module Program =
 
         let builder = WebApplication.CreateBuilder(args)
 
-        //builder.Services.AddControllers() |> ignore
-        //builder.Services.AddSingleton<IControllerActivator>(fun _ -> new BookingApiControllerActivator() :> IControllerActivator) |> ignore
-        //builder.Services.AddSingleton<IControllerActivator,BookingApiControllerActivator>() |> ignore
         let reservations = ConcurrentBag<Envelope<Reservation>>()
+        let notifications = ConcurrentBag<Envelope<Notification>>()
+
+
         let reservationsSubject = new Subject<Envelope<Reservation>>()
         reservationsSubject.Subscribe reservations.Add |> ignore
+
+        let notificationsSubject = new Subject<Notification>()
+
+        notificationsSubject
+        |> Observable.map EnvelopWithDefaults
+        |> Observable.subscribe notifications.Add
+        |> ignore
 
         let agent =
             new Agent<Envelope<MakeReservation>>(fun inbox ->
@@ -40,8 +47,25 @@ module Program =
                         let newReservations = handle cmd
 
                         match newReservations with
-                        | Some (r) -> reservationsSubject.OnNext r
-                        | None -> ()
+                        | Some(r) ->
+                            reservationsSubject.OnNext r
+
+                            notificationsSubject.OnNext
+                                { About = cmd.Id
+                                  Type = "Success"
+                                  Message =
+                                    sprintf
+                                        "Your reservation for %s was completed. We look forward to see you."
+                                        (cmd.Item.Date.ToString "yyyy.MM.dd") }
+
+                        | None ->
+                            notificationsSubject.OnNext
+                                { About = cmd.Id
+                                  Type = "Failure"
+                                  Message =
+                                    sprintf
+                                        "We regret to inform you that your reservation for %s could not be completed, because we are already fully booked."
+                                        (cmd.Item.Date.ToString "yyyy.MM.dd") }
 
                         Seq.toList rs |> PrintAll
 
