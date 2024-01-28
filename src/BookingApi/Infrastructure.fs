@@ -34,12 +34,13 @@ type CompositionRoot() =
 
 let ConfigureServices (builder: WebApplicationBuilder) =
     builder.Services.AddControllers() |> ignore
-    builder.Services.AddSingleton<IControllerActivator, CompositionRoot>()
-    |> ignore
+    builder.Services.AddSingleton<IControllerActivator, CompositionRoot>() |> ignore
 
 let ConfigureBuilder = ConfigureServices
 
 let ConfigureRoutes (app: WebApplication) =
+    app.UseHttpsRedirection() |> ignore
+
     app.MapControllerRoute(
         "DefaultAPI",
         "{controller}/{id}",
