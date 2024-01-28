@@ -19,28 +19,30 @@ type Agent<'T> = MailboxProcessor<'T>
 type HttpRouteDefaults = { Controller: string; Id: obj }
 
 type CompositionRoot() =
-    
+
     let seatingCapacity = 10
-    let reservations =
-        ConcurrentBag<Envelope<Reservation>>()
-    
-    let agent = new Agent<Envelope<MakeReservation>>(
-        fun inbox ->
+    let reservations = ConcurrentBag<Envelope<Reservation>>()
+
+    let agent =
+        new Agent<Envelope<MakeReservation>>(fun inbox ->
             let rec loop () =
                 async {
                     let! cmd = inbox.Receive()
                     let rs = reservations |> ToReservations
                     let handle = Handle seatingCapacity rs
                     let newReservations = handle cmd
+
                     match newReservations with
                     | Some(r) -> reservations.Add r
                     | None -> ()
-                    return! loop()
+
+                    return! loop ()
                 }
-            loop()
-        )
+
+            loop ())
+
     do agent.Start()
-    
+
     let Make (context: ControllerContext, controllerType: Type) : obj =
         match controllerType.Name with
         | nameof HomeController -> HomeController()

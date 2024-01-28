@@ -36,8 +36,6 @@ type ReservationController() =
             |> EnvelopWithDefaults
 
         subject.OnNext cmd
-        Console.WriteLine(rendition)
-        Console.WriteLine(cmd)
         base.Accepted()
 
     interface IObservable<Envelope<MakeReservation>> with
