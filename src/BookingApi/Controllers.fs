@@ -89,33 +89,53 @@ type NotificationController(notifications: INotifications) =
 type AvailabilityController(seatingCapacity: int) =
     inherit ControllerBase()
 
+        
     [<HttpGet("{year}")>]
     member this.Get year =
+        let now = DateTimeOffset.Now
+
         let openings =
             In(Year(year))
             |> Seq.map (fun d ->
                 { Date = d.ToString "yyyy.MM.dd"
-                  Seats = seatingCapacity })
+                  Seats =
+                    if d < now.Date then
+                        0
+                    else
+                        seatingCapacity })
             |> Seq.toArray
 
         ``base``.Ok({ Openings = openings })
 
     [<HttpGet("{year}/{month}")>]
     member this.Get(year, month) =
+        let now = DateTimeOffset.Now
+
         let openings =
             In(Month(year, month))
             |> Seq.map (fun d ->
                 { Date = d.ToString "yyyy.MM.dd"
-                  Seats = seatingCapacity })
+                  Seats =
+                    if d < now.Date then
+                        0
+                    else
+                        seatingCapacity })
             |> Seq.toArray
 
         ``base``.Ok({ Openings = openings })
 
     [<HttpGet("{year}/{month}/{day}")>]
     member this.Get(year: int, month, day) =
+        let now = DateTimeOffset.Now
+        let requestedDate = DateTimeOffset(DateTime(year, month, day), now.Offset)
+
         let opening =
-            { Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
-              Seats = seatingCapacity }
+            { Date = requestedDate.ToString "yyyy.MM.dd"
+              Seats =
+                if requestedDate.Date < now.Date then
+                    0
+                else
+                    seatingCapacity }
 
         ``base``.Ok({ Openings = [| opening |] })
 
