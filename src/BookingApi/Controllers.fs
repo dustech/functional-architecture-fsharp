@@ -3,6 +3,7 @@
 open System
 open System.Globalization // for CultureInfo
 open System.Reactive.Subjects // for Subject
+open Dustech.BookingApi.DomainModel.Reservations // for IReservations
 open Microsoft.AspNetCore.Mvc //for ApiController Attribute
 open Dustech.BookingApi.Messages // for all Messages types
 open Dustech.BookingApi.Renditions // for MakeReservationRendition cmd
@@ -86,10 +87,9 @@ type NotificationController(notifications: INotifications) =
 
 [<ApiController>]
 [<Route("[controller]")>]
-type AvailabilityController(seatingCapacity: int) =
+type AvailabilityController(reservations: IReservations, seatingCapacity: int) =
     inherit ControllerBase()
 
-        
     [<HttpGet("{year}")>]
     member this.Get year =
         let now = DateTimeOffset.Now

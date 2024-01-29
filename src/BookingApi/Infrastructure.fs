@@ -2,6 +2,7 @@
 
 open System // for Type
 open System.Threading.Tasks //  for ValueTask
+open Dustech.BookingApi.DomainModel.Reservations
 open Microsoft.AspNetCore.Builder // for WebApplication
 open Microsoft.AspNetCore.Mvc // for ControllerContext
 open Microsoft.AspNetCore.Mvc.Controllers // for IControllerActivator
@@ -12,7 +13,7 @@ open Dustech.BookingApi.DomainModel.Notifications
 
 type HttpRouteDefaults = { Controller: string; Id: obj }
 
-type CompositionRoot(notifications, seatingCapacity, reservationRequestObserver) =
+type CompositionRoot(reservations, notifications, seatingCapacity, reservationRequestObserver) =
 
     let Make (context: ControllerContext, controllerType: Type) : obj =
         match controllerType.Name with
@@ -26,7 +27,7 @@ type CompositionRoot(notifications, seatingCapacity, reservationRequestObserver)
 
             c
         | nameof NotificationController -> NotificationController(notifications)
-        | nameof AvailabilityController -> AvailabilityController(seatingCapacity)
+        | nameof AvailabilityController -> AvailabilityController(reservations, seatingCapacity)
         | _ ->
             raise
             <| InvalidOperationException($"Unknown controller {controllerType}")
@@ -49,6 +50,7 @@ type CompositionRoot(notifications, seatingCapacity, reservationRequestObserver)
 
 let ConfigureServices
     (builder: WebApplicationBuilder)
+    (reservations: IReservations)
     (notifications: INotifications)
     seatingCapacity
     reservationRequestObserver
@@ -56,7 +58,8 @@ let ConfigureServices
     builder.Services.AddControllers() |> ignore
 
     builder.Services.AddSingleton<IControllerActivator> (fun _ ->
-        CompositionRoot(notifications, seatingCapacity, reservationRequestObserver) :> IControllerActivator)
+        CompositionRoot(reservations, notifications, seatingCapacity, reservationRequestObserver)
+        :> IControllerActivator)
     |> ignore
 
 

@@ -78,7 +78,13 @@ module Program =
                 loop ())
 
         do agent.Start()
-        ConfigureServices builder (notifications |> ToNotifications) seatingCapacity agent.Post
+
+        ConfigureServices
+            builder
+            (reservations |> ToReservations)
+            (notifications |> ToNotifications)
+            seatingCapacity
+            agent.Post
 
         let app = builder.Build()
 
