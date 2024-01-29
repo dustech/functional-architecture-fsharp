@@ -15,3 +15,13 @@ type NotificationRendition =
 
 type NotificationListRendition =
     { Notifications: NotificationRendition array }
+
+type AtomLinkRendition =
+    { Rel: string
+      Href: string
+      Mtype: string option
+      Hreflang: string option
+      Title: string option
+      Length: int option }
+
+type LinkListRendition = { Links: AtomLinkRendition array }
