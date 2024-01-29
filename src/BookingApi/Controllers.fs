@@ -100,5 +100,18 @@ type AvailabilityController(seatingCapacity: int) =
             |> Seq.toArray
            
         ``base``.Ok({Openings = openings})
+    
+    [<HttpGet("{year}/{month}")>]
+    member this.Get (year,month) =
+        let openings =
+            In(Month(year,month))
+            |> Seq.map (
+                fun d -> {
+                    Date = d.ToString "yyyy.MM.dd"
+                    Seats = seatingCapacity 
+                })
+            |> Seq.toArray
+           
+        ``base``.Ok({Openings = openings})
             
     member this.SeatingCapacity = seatingCapacity
