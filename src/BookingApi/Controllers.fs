@@ -53,11 +53,12 @@ type ReservationController() =
 [<Route("[controller]")>]
 type NotificationController(notifications: INotifications) =
     inherit ControllerBase()
+
     let toRendition (n: Envelope<Notification>) =
-            { About = n.Item.About.ToString()
-              Type = n.Item.Type
-              Message = n.Item.Message }
-            
+        { About = n.Item.About.ToString()
+          Type = n.Item.Type
+          Message = n.Item.Message }
+
     [<HttpGet>]
     member this.Get() =
 
@@ -65,9 +66,9 @@ type NotificationController(notifications: INotifications) =
             this.Notifications
             |> Seq.map toRendition
             |> Seq.toArray
-        
-        base.Ok({Notifications = matches })
-        
+
+        ``base``.Ok({ Notifications = matches })
+
     [<HttpGet("{id:guid}")>]
     member this.Get id =
 
@@ -76,7 +77,7 @@ type NotificationController(notifications: INotifications) =
             |> About id
             |> Seq.map toRendition
             |> Seq.toArray
-        
-        base.Ok({Notifications = matches })
+
+        ``base``.Ok({ Notifications = matches })
 
     member this.Notifications = notifications

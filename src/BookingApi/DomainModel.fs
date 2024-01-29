@@ -68,21 +68,20 @@ module Notifications =
     type INotifications =
         inherit seq<Envelope<Notification>>
         abstract About: Guid -> seq<Envelope<Notification>>
-        
+
     type NotificationsInMemory(notifications) =
         interface INotifications with
             member _.About id =
                 notifications
                 |> Seq.filter (fun n -> n.Item.About = id)
-                
+
             member _.GetEnumerator() = notifications.GetEnumerator()
-                
+
             member this.GetEnumerator() =
                 (this :> seq<Envelope<Notification>>)
                     .GetEnumerator()
                 :> System.Collections.IEnumerator
-    
+
     let ToNotifications notifications = NotificationsInMemory(notifications)
-    
+
     let About id (notifications: INotifications) = notifications.About id
-        

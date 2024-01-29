@@ -48,6 +48,7 @@ type CompositionRoot(reservationRequestObserver) =
 
 let ConfigureServices (builder: WebApplicationBuilder) reservationRequestObserver =
     builder.Services.AddControllers() |> ignore
+
     builder.Services.AddSingleton<IControllerActivator> (fun _ ->
         CompositionRoot(reservationRequestObserver) :> IControllerActivator)
     |> ignore
