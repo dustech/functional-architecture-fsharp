@@ -1,0 +1,10 @@
+﻿###
+
+GET https://localhost:{{PORT}}/notification/
+Accept: application/json
+
+###
+
+GET https://localhost:{{PORT}}/notification/{{$random.uuid}}
+Accept: application/json
+
