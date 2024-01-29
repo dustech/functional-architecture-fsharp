@@ -4,7 +4,7 @@ POST https://localhost:{{PORT}}/reservation
 Content-Type: application/json
 
 {
-  "date"  : "2024-01-26",
+  "date"  : "2024-02-09",
   "name"  : "Stefano Cerruti",
   "email"  : "stefano.cerruti@outlook.com",
   "quantity"  : {{$random.integer(1,10)}}

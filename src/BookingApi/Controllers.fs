@@ -96,10 +96,9 @@ type AvailabilityController(reservations: IReservations, seatingCapacity: int) =
             seatingCapacity - (map |> Map.find date)
         else
             seatingCapacity
-
-    [<HttpGet("{year}")>]
-    member this.Get year =
-        let (min, max) = BoundariesIn(Year(year))
+    
+    let getOpeningsIn period =
+        let (min, max) = BoundariesIn period
         let map =
             reservations
             |> Between min max
@@ -110,7 +109,7 @@ type AvailabilityController(reservations: IReservations, seatingCapacity: int) =
         let now = DateTimeOffset.Now
 
         let openings =
-            In(Year(year))
+            In period
             |> Seq.map (fun d ->
                 { Date = d.ToString "yyyy.MM.dd"
                   Seats =
@@ -119,56 +118,23 @@ type AvailabilityController(reservations: IReservations, seatingCapacity: int) =
                     else
                         getAvailableSeats map d })
             |> Seq.toArray
+        openings
+    
+    [<HttpGet("{year}")>]
+    member this.Get year =
+        let openings = getOpeningsIn <| Year(year)
 
         ``base``.Ok({ Openings = openings })
 
     [<HttpGet("{year}/{month}")>]
     member this.Get(year, month) =
-        let (min, max) = BoundariesIn(Month(year,month))
-        let map =
-            reservations
-            |> Between min max
-            |> Seq.groupBy (_.Item.Date)
-            |> Seq.map (fun (d,rs) -> (d, rs |> Seq.sumBy (_.Item.Quantity)))
-            |> Map.ofSeq
-            
-        let now = DateTimeOffset.Now
-
-        let openings =
-            In(Month(year, month))
-            |> Seq.map (fun d ->
-                { Date = d.ToString "yyyy.MM.dd"
-                  Seats =
-                    if d < now.Date then
-                        0
-                    else
-                        getAvailableSeats map d })
-            |> Seq.toArray
+        let openings = getOpeningsIn <| Month(year,month)
 
         ``base``.Ok({ Openings = openings })
 
     [<HttpGet("{year}/{month}/{day}")>]
     member this.Get(year: int, month, day) =
-        let (min, max) = BoundariesIn(Day(year,month,day))
-        let map =
-            reservations
-            |> Between min max
-            |> Seq.groupBy (_.Item.Date)
-            |> Seq.map (fun (d,rs) -> (d, rs |> Seq.sumBy (_.Item.Quantity)))
-            |> Map.ofSeq
-            
-        let now = DateTimeOffset.Now
-
-        let openings =
-            In(Day(year,month,day))
-            |> Seq.map (fun d ->
-                { Date = d.ToString "yyyy.MM.dd"
-                  Seats =
-                    if d < now.Date then
-                        0
-                    else
-                        getAvailableSeats map d })
-            |> Seq.toArray
+        let openings = getOpeningsIn <| Day(year,month,day) 
 
         ``base``.Ok({ Openings = openings })
 
