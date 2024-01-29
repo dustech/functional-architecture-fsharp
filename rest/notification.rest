@@ -8,3 +8,8 @@ Accept: application/json
 GET https://localhost:{{PORT}}/notification/{{$random.uuid}}
 Accept: application/json
 
+###
+
+GET https://localhost:{{PORT}}/notification/74d157fa313d4906ac9292cd6dd4e0fb
+Accept: application/json
+
