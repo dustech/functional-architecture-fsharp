@@ -9,6 +9,7 @@ open Dustech.BookingApi.Renditions // for MakeReservationRendition cmd
 open Dustech.BookingApi.DomainModel.Notifications // for INotifications
 open Dustech.BookingApi.DomainModel.Dates // for dates manipulation
 open Dustech.BookingApi.DomainModel //for Period sum type
+
 type SampleJson = { Message: string }
 
 [<ApiController>]
@@ -92,26 +93,30 @@ type AvailabilityController(seatingCapacity: int) =
     member this.Get year =
         let openings =
             In(Year(year))
-            |> Seq.map (
-                fun d -> {
-                    Date = d.ToString "yyyy.MM.dd"
-                    Seats = seatingCapacity 
-                })
+            |> Seq.map (fun d ->
+                { Date = d.ToString "yyyy.MM.dd"
+                  Seats = seatingCapacity })
             |> Seq.toArray
-           
-        ``base``.Ok({Openings = openings})
-    
+
+        ``base``.Ok({ Openings = openings })
+
     [<HttpGet("{year}/{month}")>]
-    member this.Get (year,month) =
+    member this.Get(year, month) =
         let openings =
-            In(Month(year,month))
-            |> Seq.map (
-                fun d -> {
-                    Date = d.ToString "yyyy.MM.dd"
-                    Seats = seatingCapacity 
-                })
+            In(Month(year, month))
+            |> Seq.map (fun d ->
+                { Date = d.ToString "yyyy.MM.dd"
+                  Seats = seatingCapacity })
             |> Seq.toArray
-           
-        ``base``.Ok({Openings = openings})
-            
+
+        ``base``.Ok({ Openings = openings })
+
+    [<HttpGet("{year}/{month}/{day}")>]
+    member this.Get(year: int, month, day) =
+        let opening =
+            { Date = DateTime(year, month, day).ToString "yyyy.MM.dd"
+              Seats = seatingCapacity }
+
+        ``base``.Ok({ Openings = [| opening |] })
+
     member this.SeatingCapacity = seatingCapacity

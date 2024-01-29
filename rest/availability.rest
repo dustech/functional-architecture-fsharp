@@ -5,3 +5,8 @@ Accept: application/json
 ###All 2024/02 Openings
 GET https://localhost:{{PORT}}/availability/2024/02
 Accept: application/json
+
+
+###All 2024/02/09 Openings
+GET https://localhost:{{PORT}}/availability/2024/02/09
+Accept: application/json
