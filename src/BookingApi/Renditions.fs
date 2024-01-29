@@ -19,7 +19,7 @@ type NotificationListRendition =
 type AtomLinkRendition =
     { Rel: string
       Href: string
-      Mtype: string option
+      MType: string option
       Hreflang: string option
       Title: string option
       Length: int option }
