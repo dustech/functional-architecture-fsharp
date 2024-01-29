@@ -25,11 +25,15 @@ type AtomLinkRendition =
       Length: int option }
 
 let AtomLinkRenditionWithDefaults href =
-        { Rel = "https://localhost:7045/notification"
-          Href = href
-          MType = None
-          Hreflang = None
-          Title = None
-          Length = None }
+    { Rel = "https://localhost:7045/notification"
+      Href = href
+      MType = None
+      Hreflang = None
+      Title = None
+      Length = None }
 
 type LinkListRendition = { Links: AtomLinkRendition array }
+
+type OpeningsRendition = { Date: string; Seats: int }
+
+type AvailabilityRendition = { Openings: OpeningsRendition array }
