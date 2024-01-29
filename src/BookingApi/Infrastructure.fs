@@ -12,7 +12,7 @@ open Dustech.BookingApi.DomainModel.Notifications
 
 type HttpRouteDefaults = { Controller: string; Id: obj }
 
-type CompositionRoot(notifications, reservationRequestObserver) =
+type CompositionRoot(notifications, seatingCapacity, reservationRequestObserver) =
 
     let Make (context: ControllerContext, controllerType: Type) : obj =
         match controllerType.Name with
@@ -26,6 +26,7 @@ type CompositionRoot(notifications, reservationRequestObserver) =
 
             c
         | nameof NotificationController -> NotificationController(notifications)
+        | nameof AvailabilityController -> AvailabilityController(seatingCapacity)
         | _ ->
             raise
             <| InvalidOperationException($"Unknown controller {controllerType}")
@@ -46,11 +47,16 @@ type CompositionRoot(notifications, reservationRequestObserver) =
             |> ValueTask
 
 
-let ConfigureServices (builder: WebApplicationBuilder) (notifications: INotifications)  reservationRequestObserver =
+let ConfigureServices
+    (builder: WebApplicationBuilder)
+    (notifications: INotifications)
+    seatingCapacity
+    reservationRequestObserver
+    =
     builder.Services.AddControllers() |> ignore
 
     builder.Services.AddSingleton<IControllerActivator> (fun _ ->
-        CompositionRoot(notifications,reservationRequestObserver) :> IControllerActivator)
+        CompositionRoot(notifications, seatingCapacity, reservationRequestObserver) :> IControllerActivator)
     |> ignore
 
 

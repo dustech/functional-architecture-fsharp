@@ -10,6 +10,7 @@ open Microsoft.AspNetCore.Builder // for WebApplication
 open Dustech.BookingApi.Infrastructure // for ConfigureBuilder
 open Dustech.BookingApi.DomainModel.Reservations // for ToReservations and Handle
 open Dustech.BookingApi.DomainModel.Notifications // for ToNotifications
+
 module Program =
     let exitCode = 0
 
@@ -77,7 +78,7 @@ module Program =
                 loop ())
 
         do agent.Start()
-        ConfigureServices builder (notifications |> ToNotifications)  agent.Post
+        ConfigureServices builder (notifications |> ToNotifications) seatingCapacity agent.Post
 
         let app = builder.Build()
 
