@@ -91,34 +91,32 @@ type NotificationController(notifications: INotifications) =
 type AvailabilityController(reservations: IReservations, seatingCapacity: int) =
     inherit ControllerBase()
 
-    let getAvailableSeats map date =
-        if map |> Map.containsKey date then
+    let getAvailableSeats map (now : DateTimeOffset) date =
+        if date < now.Date then 0
+        elif map |> Map.containsKey date then
             seatingCapacity - (map |> Map.find date)
         else
             seatingCapacity
-    
-    let getOpeningsIn period =
-        let (min, max) = BoundariesIn period
-        let map =
-            reservations
+    let toMapOfDatesAndQuantities (min,max) reservations =
+        reservations
             |> Between min max
             |> Seq.groupBy (_.Item.Date)
             |> Seq.map (fun (d,rs) -> (d, rs |> Seq.sumBy (_.Item.Quantity)))
             |> Map.ofSeq
-
-        let now = DateTimeOffset.Now
-
-        let openings =
-            In period
-            |> Seq.map (fun d ->
-                { Date = d.ToString "yyyy.MM.dd"
-                  Seats =
-                    if d < now.Date then
-                        0
-                    else
-                        getAvailableSeats map d })
-            |> Seq.toArray
-        openings
+    
+    let toOpening ((d: DateTime),seats :int ) =
+            { Date = d.ToString "yyyy.MM.dd"
+              Seats = seats }
+    let getOpeningsIn period =
+        let boundaries = (BoundariesIn period)
+        let map = reservations |> toMapOfDatesAndQuantities boundaries
+        let getAvailable = getAvailableSeats map DateTimeOffset.Now
+        
+        In period
+        |> Seq.map (fun d -> (d, getAvailable d))
+        |> Seq.map toOpening
+        |> Seq.toArray
+        
     
     [<HttpGet("{year}")>]
     member this.Get year =
