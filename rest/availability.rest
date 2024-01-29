@@ -1,0 +1,3 @@
+﻿###All 2024 Openings
+GET https://localhost:{{PORT}}/availability/2024
+Accept: application/json

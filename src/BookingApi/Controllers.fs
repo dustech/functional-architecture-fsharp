@@ -88,7 +88,7 @@ type NotificationController(notifications: INotifications) =
 type AvailabilityController(seatingCapacity: int) =
     inherit ControllerBase()
 
-    [<HttpGet>]
+    [<HttpGet("{year}")>]
     member this.Get year =
         let openings =
             In(Year(year))
