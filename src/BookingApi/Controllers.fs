@@ -36,7 +36,11 @@ type ReservationController() =
             |> EnvelopWithDefaults
 
         subject.OnNext cmd
-        base.Accepted()
+        base.Accepted({
+            Links = [|
+                AtomLinkRenditionWithDefaults ("notifications/" + cmd.Id.ToString "N")                
+            |] 
+        })
 
     [<HttpGet>]
     member _.Get() =

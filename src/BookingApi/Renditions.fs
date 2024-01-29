@@ -24,4 +24,12 @@ type AtomLinkRendition =
       Title: string option
       Length: int option }
 
+let AtomLinkRenditionWithDefaults href =
+        { Rel = "https://localhost:7045/notification"
+          Href = href
+          MType = None
+          Hreflang = None
+          Title = None
+          Length = None }
+
 type LinkListRendition = { Links: AtomLinkRendition array }
