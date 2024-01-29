@@ -7,7 +7,8 @@ open Microsoft.AspNetCore.Mvc //for ApiController Attribute
 open Dustech.BookingApi.Messages // for all Messages types
 open Dustech.BookingApi.Renditions // for MakeReservationRendition cmd
 open Dustech.BookingApi.DomainModel.Notifications // for INotifications
-
+open Dustech.BookingApi.DomainModel.Dates // for dates manipulation
+open Dustech.BookingApi.DomainModel //for Period sum type
 type SampleJson = { Message: string }
 
 [<ApiController>]
@@ -36,11 +37,7 @@ type ReservationController() =
             |> EnvelopWithDefaults
 
         subject.OnNext cmd
-        base.Accepted({
-            Links = [|
-                AtomLinkRenditionWithDefaults ("notifications/" + cmd.Id.ToString "N")                
-            |] 
-        })
+        ``base``.Accepted({ Links = [| AtomLinkRenditionWithDefaults("notifications/" + cmd.Id.ToString "N") |] })
 
     [<HttpGet>]
     member _.Get() =
@@ -85,3 +82,23 @@ type NotificationController(notifications: INotifications) =
         ``base``.Ok({ Notifications = matches })
 
     member this.Notifications = notifications
+
+[<ApiController>]
+[<Route("[controller]")>]
+type AvailabilityController(seatingCapacity: int) =
+    inherit ControllerBase()
+
+    [<HttpGet>]
+    member this.Get year =
+        let openings =
+            In(Year(year))
+            |> Seq.map (
+                fun d -> {
+                    Date = d.ToString "yyyy.MM.dd"
+                    Seats = seatingCapacity 
+                })
+            |> Seq.toArray
+           
+        ``base``.Ok({Openings = openings})
+            
+    member this.SeatingCapacity = seatingCapacity
