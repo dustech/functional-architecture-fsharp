@@ -1,4 +1,4 @@
-###
+###Book Stefano
 
 POST https://localhost:{{PORT}}/reservation
 Content-Type: application/json
@@ -10,6 +10,20 @@ Content-Type: application/json
   "quantity"  : {{$random.integer(1,10)}}
 }
 
-###
+###Book Polonzo
+
+POST https://localhost:{{PORT}}/reservation
+Content-Type: application/json
+
+{
+  "date"  : "2024-02-09",
+  "name"  : "Cavallo Polonzo",
+  "email"  : "polonzomolofoloppo@outlook.com.polonzo",
+  "quantity"  : {{$random.integer(1,10)}}
+}
+
+###Get All Reservations
 
 GET https://localhost:{{PORT}}/reservation
+
+###
