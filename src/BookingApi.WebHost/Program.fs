@@ -12,6 +12,7 @@ open Dustech.BookingApi.Messages // for Envelop, Reservation
 open Dustech.BookingApi.Infrastructure // for ConfigureBuilder
 open Dustech.BookingApi.DomainModel.Reservations // for ToReservations and Handle
 open Dustech.BookingApi.DomainModel.Notifications // for ToNotifications
+open Dustech.BookingApi.DomainModel // for Dates
 
 module Program =
     let exitCode = 0
@@ -51,6 +52,27 @@ module Program =
             Directory.CreateDirectory directoryName |> ignore
             File.WriteAllText(fileName, json)
 
+        member this.Add = this.Write
+
+        interface IReservations with
+            member this.Between min max =
+                Dates.InitInfinite min
+                |> Seq.takeWhile (fun d -> d <= max)
+                |> Seq.map getContainingDirectory
+                |> Seq.collect (fun dir -> DirectoryInfo(dir) |> getJsonFiles)
+                |> Seq.map toReservation
+
+            member this.GetEnumerator() =
+                directory
+                |> getJsonFiles
+                |> Seq.map toReservation
+                |> toEnumerator
+
+            member this.GetEnumerator() =
+                (this :> seq<Envelope<Reservation>>)
+                    .GetEnumerator()
+                :> System.Collections.IEnumerator
+
 
     type HttpRouteDefaults = { Controller: string; Id: obj }
 
@@ -62,7 +84,14 @@ module Program =
 
         let builder = WebApplication.CreateBuilder(args)
 
-        let reservations = ConcurrentBag<Envelope<Reservation>>()
+        // let reservations = ConcurrentBag<Envelope<Reservation>>()
+
+        let dirStore =
+            DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../../ReservationStore"))
+
+        let reservations = ReservationsInFiles(dirStore)
+
+
         let notifications = ConcurrentBag<Envelope<Notification>>()
 
 
@@ -83,8 +112,8 @@ module Program =
                 let rec loop () =
                     async {
                         let! cmd = inbox.Receive()
-                        let rs = reservations |> ToReservations
-                        let handle = Handle seatingCapacity rs
+                        //let rs = reservations |> ToReservations
+                        let handle = Handle seatingCapacity reservations
                         let newReservations = handle cmd
 
                         match newReservations with
@@ -108,7 +137,7 @@ module Program =
                                         "We regret to inform you that your reservation for %s could not be completed, because we are already fully booked."
                                         (cmd.Item.Date.ToString "yyyy.MM.dd") }
 
-                        Seq.toList rs |> PrintAll
+                        Seq.toList reservations |> PrintAll
 
                         return! loop ()
                     }
@@ -119,7 +148,7 @@ module Program =
 
         ConfigureServices
             builder
-            (reservations |> ToReservations)
+            reservations
             (notifications |> ToNotifications)
             seatingCapacity
             agent.Post
