@@ -3,3 +3,7 @@
 
 [Bb]in
 [Oo]bj
+
+# Add ReservationStore to ignore, specific for the project
+# to avoid to versionate the local json files storage
+ReservationStore
