@@ -4,6 +4,7 @@ open System
 open System.Globalization // for CultureInfo
 open System.Reactive.Subjects // for Subject
 open Microsoft.AspNetCore.Mvc //for ApiController Attribute
+open Dustech.BookingApi.Utility // for curry e uncurry
 open Dustech.BookingApi.Messages // for all Messages types
 open Dustech.BookingApi.Renditions // for MakeReservationRendition cmd
 open Dustech.BookingApi.DomainModel //for Period sum type
@@ -11,8 +12,6 @@ open Dustech.BookingApi.DomainModel.Notifications // for INotifications
 open Dustech.BookingApi.DomainModel.Dates // for dates manipulation
 open Dustech.BookingApi.DomainModel.Reservations // for IReservations
 
-
-type SampleJson = { Message: string }
 
 [<ApiController>]
 [<Route("[controller]")>]
@@ -26,10 +25,15 @@ type HomeController() =
 
 [<ApiController>]
 [<Route("[controller]")>]
-type ReservationController() =
+type ReservationController(reservations: IReservations) =
     inherit Controller()
     let subject = new Subject<Envelope<MakeReservation>>()
-
+    
+    let getReservationsIn period =
+            BoundariesIn period
+            |> uncurry (reservations.Between )                 
+            
+            
     [<HttpPost>]
     member _.Post(rendition: MakeReservationRendition) =
         let cmd =
@@ -42,9 +46,10 @@ type ReservationController() =
         subject.OnNext cmd
         ``base``.Accepted({ Links = [| AtomLinkRenditionWithDefaults("notifications/" + cmd.Id.ToString "N") |] })
 
-    [<HttpGet>]
-    member _.Get() =
-        ``base``.Ok("Time to get all reservations")
+    [<HttpGet("{year}/{month}/{day}")>]
+    member this.Get(year: int, month, day) =
+        let reservations = getReservationsIn <| Day(year,month,day) 
+        ``base``.Ok(reservations)
 
     interface IObservable<Envelope<MakeReservation>> with
         member _.Subscribe(observer) = subject.Subscribe observer
@@ -62,7 +67,7 @@ type NotificationController(notifications: INotifications) =
         { About = n.Item.About.ToString()
           Type = n.Item.Type
           Message = n.Item.Message }
-
+    
     [<HttpGet>]
     member this.Get() =
 

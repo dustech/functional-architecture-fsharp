@@ -12,6 +12,7 @@
     </PropertyGroup>
     
     <ItemGroup>
+        <Compile Include="Utility.fs" />
         <Compile Include="Messages.fs" />
         <Compile Include="Renditions.fs" />
         <Compile Include="DomainModel.fs" />

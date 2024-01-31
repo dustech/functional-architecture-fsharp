@@ -26,4 +26,6 @@ Content-Type: application/json
 
 GET https://localhost:{{PORT}}/reservation
 
-###
+###Get 2024/02/09 Reservations
+GET https://localhost:{{PORT}}/reservation/2024/02/09
+Accept: application/json

@@ -19,7 +19,7 @@ type CompositionRoot(reservations, notifications, seatingCapacity, reservationRe
         match controllerType.Name with
         | nameof HomeController -> HomeController()
         | nameof ReservationController ->
-            let c = new ReservationController()
+            let c = new ReservationController(reservations)
 
             c
             |> Observable.subscribe reservationRequestObserver
