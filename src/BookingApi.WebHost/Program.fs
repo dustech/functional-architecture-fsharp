@@ -12,8 +12,7 @@ open Microsoft.AspNetCore.Builder // for WebApplication
 open Dustech.BookingApi.Messages // for Envelop, Reservation
 open Dustech.BookingApi.Infrastructure // for ConfigureBuilder
 open Dustech.BookingApi.DomainModel.Reservations // for ToReservations and Handle
-open Dustech.BookingApi.DomainModel.Notifications // for ToNotifications
-open Dustech.BookingApi.DomainModel.ReservationsInFiles // for ReservationsInFiles
+open Dustech.BookingApi.DomainModel.StorageInFiles // for ReservationsInFiles, NotificationInFiles
 
 module Program =
     let exitCode = 0
@@ -30,14 +29,18 @@ module Program =
 
         // let reservations = ConcurrentBag<Envelope<Reservation>>()
 
-        let dirStore =
+        let dirReservationStore =
             DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../../ReservationStore"))
 
-        let reservations = ReservationsInFiles(dirStore)
+        let reservations = ReservationsInFiles(dirReservationStore)
 
 
-        let notifications = ConcurrentBag<Envelope<Notification>>()
-
+        //let notifications = ConcurrentBag<Envelope<Notification>>()
+        
+        let dirNotificationStore =
+            DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "../../NotificationStore"))
+        
+        let notifications = NotificationsInFiles(dirNotificationStore)
 
         let reservationsSubject = new Subject<Envelope<Reservation>>()
 
@@ -90,7 +93,7 @@ module Program =
 
         do agent.Start()
 
-        ConfigureServices builder reservations (notifications |> ToNotifications) seatingCapacity agent.Post
+        ConfigureServices builder reservations notifications seatingCapacity agent.Post
 
         let app = builder.Build()
 
