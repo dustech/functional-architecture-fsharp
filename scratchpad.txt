@@ -15,3 +15,4 @@ let randomReservations = seq [
         
         // PrintAll (Seq.toList resdb)
         PrintAll pollo
+        
